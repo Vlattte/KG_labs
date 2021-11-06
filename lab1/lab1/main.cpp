@@ -28,43 +28,12 @@ float n = 1.0f;
 
 void initGL() {
    glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
-    
-   /* verticies[0][0] = xLeft;
-    verticies[0][1] = yBottom;
-
-    verticies[1][0] = xLeft;
-    verticies[1][0] = 0.0f;
-
-    verticies[2][0] = xRight;
-    verticies[2][1] = 0.0f;
-
-    verticies[3][0] = xRight;
-    verticies[3][1] = yBottom;*/
 }
 
 
 void display() {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //GLfloat material_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
-    //glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material_diffuse);
-    //GLfloat light2_diffuse[] = { 0.4, 0.7, 0.2 };
-    //GLfloat light2_position[] = { xPos, yPos, 1.0, 1.0 };
-
-    //glEnable(GL_LIGHTING);
-    //glEnable(GL_LIGHT2);
-
-    //glLightfv(GL_LIGHT2, GL_DIFFUSE, light2_diffuse);
-    //glLightfv(GL_LIGHT2, GL_POSITION, light2_position);
-    //glLightf(GL_LIGHT2, GL_CONSTANT_ATTENUATION, 0.0);
-    //glLightf(GL_LIGHT2, GL_LINEAR_ATTENUATION, 0.2);
-    //glLightf(GL_LIGHT2, GL_QUADRATIC_ATTENUATION, 0.4);
-    //yPos = yTop - 2 * ballRadius;
-
+    glClear(GL_COLOR_BUFFER_BIT);
     
-   
-
-
-   
     //circle
     glTranslatef(xPos, sin(yPos), 0.0f);
     glBegin(GL_TRIANGLE_FAN);
@@ -94,20 +63,20 @@ void display() {
         {xRight, yBottom}
     };
 
-    glVertexPointer(2, GL_FLOAT, 0, grass_verties);
+    /*glVertexPointer(2, GL_FLOAT, 0, grass_verties);
     glEnableClientState(GL_VERTEX_ARRAY);
         glColor3f(0.0f, n, 0.0f);
         glDrawArrays(GL_QUADS, 0, 4);
-    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);*/
 
 
-    /*glBegin(GL_TRIANGLE_FAN);
+    glBegin(GL_TRIANGLE_FAN);
         glColor3f(0.0f, 1.0f, 0.0f);
         glVertex2f(xLeft, yBottom);
         glVertex2f(xLeft, 0);
         glVertex2f(xRight, 0);
         glVertex2f(xRight, yBottom);
-    glEnd();*/
+    glEnd();
 
 //HOUSE LEFT
 
@@ -120,19 +89,19 @@ void display() {
         {xLeft * 0.8, 0}
     };
 
-    glVertexPointer(2, GL_FLOAT, 0, lHouseVert);
+    /*glVertexPointer(2, GL_FLOAT, 0, lHouseVert);
     glEnableClientState(GL_VERTEX_ARRAY);
-    glColor3f(0.64f, 0.4f, 0.4f);
-    glDrawArrays(GL_QUADS, 0, 4);
-    glDisableClientState(GL_VERTEX_ARRAY);
+        glColor3f(0.64f, 0.4f, 0.4f);
+        glDrawArrays(GL_QUADS, 0, 4);
+    glDisableClientState(GL_VERTEX_ARRAY);*/
 
-    //glBegin(GL_TRIANGLE_FAN);
-    //    glColor3f(0.64f, 0.4f, 0.4f);
-    //    glVertex2f(xLeft * 0.6, 0);
-    //    glVertex2f(xLeft * 0.6, yTop * 0.2);
-    //    glVertex2f(xLeft * 0.8, yTop * 0.2);
-    //    glVertex2f(xLeft * 0.8, 0);
-    //glEnd();
+    glBegin(GL_TRIANGLE_FAN);
+        glColor3f(0.64f, 0.4f, 0.4f);
+        glVertex2f(xLeft * 0.6, 0);
+        glVertex2f(xLeft * 0.6, yTop * 0.2);
+        glVertex2f(xLeft * 0.8, yTop * 0.2);
+        glVertex2f(xLeft * 0.8, 0);
+    glEnd();
 
     //roof
     GLfloat lRoofVert[3][2] =
@@ -142,19 +111,19 @@ void display() {
         {xLeft * 0.85, yTop * 0.2}
     };
 
-    glVertexPointer(2, GL_FLOAT, 0, lRoofVert);
+    /*glVertexPointer(2, GL_FLOAT, 0, lRoofVert);
     glEnableClientState(GL_VERTEX_ARRAY);
         glColor3f(0.64f, 0.16f, 0.16f);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 3);
-    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);*/
 
 
-    /*glBegin(GL_TRIANGLE_FAN);
+    glBegin(GL_TRIANGLE_FAN);
         glColor3f(0.64f, 0.16f, 0.16f);
         glVertex2f(xLeft * 0.55, yTop * 0.2);
         glVertex2f(xLeft * 0.7, yTop * 0.4);
         glVertex2f(xLeft * 0.85, yTop * 0.2);
-    glEnd();*/
+    glEnd();
 
     //door
     GLfloat lDoorVert[4][2] =
@@ -165,20 +134,20 @@ void display() {
         {xLeft * 0.75, 0}
     };
 
-    glVertexPointer(2, GL_FLOAT, 0, lDoorVert);
+    /*glVertexPointer(2, GL_FLOAT, 0, lDoorVert);
     glEnableClientState(GL_VERTEX_ARRAY);
         glColor3f(0.0f, 0.0f, 0.0f);
         glDrawArrays(GL_QUADS, 0, 4);
-    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);*/
     
     
-    /*glBegin(GL_TRIANGLE_FAN);
+    glBegin(GL_TRIANGLE_FAN);
         glColor3f(0.0f, 0.0f, 0.0f);
         glVertex2f(xLeft * 0.71, 0);
         glVertex2f(xLeft * 0.71, yTop * 0.1);
         glVertex2f(xLeft * 0.75, yTop * 0.1);
         glVertex2f(xLeft * 0.75, 0);
-    glEnd();*/
+    glEnd();
 
 
 //HOUSE RIGHT
@@ -192,19 +161,19 @@ void display() {
         {xRight * 0.8, 0}
     };
 
-    glVertexPointer(2, GL_FLOAT, 0, rHouseVert);
+   /* glVertexPointer(2, GL_FLOAT, 0, rHouseVert);
     glEnableClientState(GL_VERTEX_ARRAY);
         glColor3f(0.64f, 0.4f, 0.4f);
         glDrawArrays(GL_QUADS, 0, 4);
-    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);*/
 
-    /*glBegin(GL_TRIANGLE_FAN);
+    glBegin(GL_TRIANGLE_FAN);
         glColor3f(0.64f, 0.4f, 0.4f);
         glVertex2f(xRight * 0.6, 0);
         glVertex2f(xRight * 0.6, yTop * 0.2);
         glVertex2f(xRight * 0.8, yTop * 0.2);
         glVertex2f(xRight * 0.8, 0);
-    glEnd();*/
+    glEnd();
 
     //roof
     GLfloat rRoofVert[3][2] =
@@ -214,18 +183,18 @@ void display() {
         {xRight * 0.85, yTop * 0.2}
     };
 
-    glVertexPointer(2, GL_FLOAT, 0, rRoofVert);
+    /*glVertexPointer(2, GL_FLOAT, 0, rRoofVert);
     glEnableClientState(GL_VERTEX_ARRAY);
         glColor3f(0.64f, 0.16f, 0.16f);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 3);
-    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);*/
 
-    /*glBegin(GL_TRIANGLE_FAN);
+    glBegin(GL_TRIANGLE_FAN);
         glColor3f(0.64f, 0.16f, 0.16f);
         glVertex2f(xRight * 0.55, yTop * 0.2);
         glVertex2f(xRight * 0.7, yTop * 0.4);
         glVertex2f(xRight * 0.85, yTop * 0.2);
-    glEnd();*/
+    glEnd();
 
     //door
     GLfloat rDoorVert[4][2] =
@@ -236,31 +205,29 @@ void display() {
         {xRight * 0.75, 0}
     };
 
-    glVertexPointer(2, GL_FLOAT, 0, rDoorVert);
+    /*glVertexPointer(2, GL_FLOAT, 0, rDoorVert);
     glEnableClientState(GL_VERTEX_ARRAY);
         glColor3f(0.0f, 0.0f, 0.0f);
         glDrawArrays(GL_QUADS, 0, 4);
-    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);*/
 
-    /*glBegin(GL_TRIANGLE_FAN);
+    glBegin(GL_TRIANGLE_FAN);
     glColor3f(0.0f, 0.0f, 0.0f);
         glVertex2f(xRight * 0.71, 0);
         glVertex2f(xRight * 0.71, yTop * 0.1);
         glVertex2f(xRight * 0.75, yTop * 0.1);
         glVertex2f(xRight * 0.75, 0);
-    glEnd();*/
+    glEnd();
 
     glutSwapBuffers();
 
     xPos += xSpeed;
-        yPos += ySpeed;
+    yPos += ySpeed;
     if (xPos > xRight * 1.7)
     {
         xPos = xLeft;
         yPos = 0;
         day_mode *= -1;
-
-
 
         if (day_mode == 1)
         {
@@ -272,12 +239,7 @@ void display() {
             glClearColor(0.0f, 0.0f, 0.8f, 0.0f);
             n = 0.5f;
         }
-
     }
-  
-   /* glDisable(GL_LIGHTING);
-
-    glDisable(GL_LIGHT1);*/
 }
 
 
