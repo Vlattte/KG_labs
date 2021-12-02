@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include <cstdio>
+#include <string>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -18,7 +19,7 @@ int windowPosY = 50;
 
 GLfloat xPos = -1.0f;
 GLfloat yPos = 0.0f;
-GLfloat zPos = -5.0f;
+GLfloat zPos = -3.0f;
 GLfloat xPosMax, xPosMin, yPosMax, yPosMin;
 GLdouble xLeft, xRight, yBottom, yTop;
 GLfloat xSpeed = 0.02f;
@@ -31,6 +32,8 @@ GLfloat angle;
 
 
 bool time_to_move = false;    //триггер на разъезд граней
+bool textures_enable = false; //триггер на включение текстур
+
 GLfloat xMove = 0.0f;
 GLfloat yMove = 0.0f;
 GLfloat zMove = -4.0f;
@@ -42,42 +45,75 @@ int go_back = -1;
 int i = 0;
 
 //textures
-unsigned int texture;
+GLuint textures[9];
+int picture = 0;
+int is_texture = 0;
+
+//alpha chanel
+float alpha = 1;
 
 void initGL() 
 {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+   
 }
 
 void Texture_Init()
 {
-    int w = 1, h = 1;
+    int w, h;
     int count;
 
-    //unsigned char* data = stbi_load("unnamed.jpg", &w, &h, &count, 0);
+    unsigned char* data = NULL;
+    glGenTextures(9, textures);
 
-    struct { unsigned char r, g, b, a; } data[2][2];
-    memset(data, 0, sizeof(data));
-    data[0][0].r = 255;
-    data[1][0].g = 255;
-    data[1][1].b = 255;
-    data[0][1].r = 255;
-    data[0][1].g = 255;
+    for (picture; picture < 9; picture++)
+    {
+        switch (picture)
+        {
+            case 0:
+                data = stbi_load("stone.jpg", &w, &h, &count, 0);
+                break;
+            case 1:
+                data = stbi_load("metal.jpg", &w, &h, &count, 0);
+                break;
+            case 2:
+                data = stbi_load("tkan.jpg", &w, &h, &count, 0);
+                break;
+            case 3:
+                data = stbi_load("texture_tree_2.jpg", &w, &h, &count, 0);
+                break;
+            case 4:
+                data = stbi_load("dod.jpg", &w, &h, &count, 0);
+                break;
+            case 5:
+                data = stbi_load("glass-texture.jpg", &w, &h, &count, 0);
+                break;
+            case 6:
+                data = stbi_load("galka.jpg", &w, &h, &count, 0);
+                break;
+            case 7:
+                data = stbi_load("krasivo.jpg", &w, &h, &count, 0);
+                break;
+            default:
+                stbi_image_free(data);
+                return;
+        }
 
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h,
-                                    0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    //stbi_image_free(data);
+        glBindTexture(GL_TEXTURE_2D, textures[picture]);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexImage2D(GL_TEXTURE_2D, 0, count == 4 ? GL_RGBA : GL_RGB, w, h,
+                                        0, count == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, data);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+    stbi_image_free(data);
+    picture = 0;
 }
 
 
-float texCoord[] = {0,1, 1,1, 1,0, 0,0};
+float texCoord[] = { 1,1, 1,0, 0,0, 0,1 };
 
 void Draw(float angle_1, int x, int y, int z, 
     int is_right, int is_back, int is_lower)
@@ -90,12 +126,6 @@ void Draw(float angle_1, int x, int y, int z,
         {1, 0, 0}
     };
 
-    //GLfloat colors[3][3] =
-    //{
-    //    {0, 0, 0},
-    //    {0.7, 0.7, 0},
-    //    {0.47, 0.47, 0.47}
-    //};
 
     if(is_back == -1)
         glTranslatef(is_right * xMove, -is_lower * yMove, zMoveBack);
@@ -108,31 +138,35 @@ void Draw(float angle_1, int x, int y, int z,
         glRotatef(90, 1, 0, 0); //нижние панели
     
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture);
+  
+    if (!textures_enable)
+        picture = 8;
 
-
-    glColor3f(1,1,1);
-    glEnableClientState(GL_VERTEX_ARRAY);
+    glBindTexture(GL_TEXTURE_2D, textures[picture]);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glColor4f(1, is_texture, 1, alpha);
+        glEnableClientState(GL_VERTEX_ARRAY);
         glVertexPointer(3, GL_FLOAT, 0, panel);
         glTexCoordPointer(2, GL_FLOAT, 0, texCoord);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    picture++;
 }
 
 void Draw_quadrat()
 {
-    GLfloat quadrat[3][3] =
+    GLfloat quadrat[4][3] =
     {
         {0,0,0},
         {0.5, 0.5, 0},
         {1, 0, 0}
     };
 
-
+   
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glBindTexture(GL_TEXTURE_2D, textures[picture]);
 
     glNormal3f(0, 0, 1);
     
@@ -141,7 +175,7 @@ void Draw_quadrat()
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glVertexPointer(3, GL_FLOAT, 0, quadrat);
         glTexCoordPointer(2, GL_FLOAT, 0, texCoord);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
@@ -149,11 +183,45 @@ void Draw_quadrat()
 
 void display()
 {
+    picture = 0;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     GLUquadricObj* quadObj;
     quadObj = gluNewQuadric();
-    
+
+    //draw sphere
+    glPushMatrix();
+    int numSegments = 400;
+    if (i == numSegments)
+        i = 0;
+
+    angle = i * 2.0f * PI / numSegments;
+    glTranslatef(cos(angle) * radius * 4, 0, sin(angle) * radius * 4 - 3.5); //2 - 3
+    i++;
+
+    GLfloat light_diffuse[] = { 1.0, 1.0, 1.0 };
+    GLfloat light_position[] = { 0.0, 0.0, 0.0, 1.0 };
+    GLfloat material_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat back_diffuse[] = { 1.0, 1.0, 1.0 };
+
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, light_diffuse);
+    glMaterialfv(GL_BACK, GL_DIFFUSE, back_diffuse);
+
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.0);
+    glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.2);
+    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.4);
+
+
+    glColor4f(1, 0, 1, alpha);
+    gluQuadricDrawStyle(quadObj, GLU_LINE);
+    gluSphere(quadObj, radius, 25, 25);
+    glPopMatrix();
+    gluDeleteQuadric(quadObj);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //draw okto //is_right is_back is_lower
     //нижние
     Draw(0, 0, 0, 0, 1, -1, 1);         //права€ передн€€ нижн€€
@@ -165,7 +233,7 @@ void display()
     Draw(90, 0, 1, 0, 1, 1, 1);         //права€ задн€€ нижн€€
     glLoadIdentity();
 
-    ////верхние
+    //верхние
     Draw(90, 0, 1, 0, 1, 1, -1);         //права€ задн€€ верхн€€
     glLoadIdentity();
     Draw(180, 0, 1, 0, -1, 1, -1);       //лева€ задн€€ верхн€€
@@ -176,44 +244,14 @@ void display()
     glLoadIdentity();
    
 
-
-    glTranslatef(0,0,-1);
+    
+    /*glTranslatef(0,0,-1);
     Draw_quadrat();
-    glLoadIdentity();
+    glLoadIdentity();*/
 
 
 
-    //draw sphere
-    glPushMatrix();
-        int numSegments = 400;
-        if (i == numSegments)
-               i = 0;
-        
-        angle = i * 2.0f * PI / numSegments;
-        glTranslatef(cos(angle) * radius * 4, 0, sin(angle) * radius * 4 - 3.5); //2 - 3
-        i++;
-
-        GLfloat light_diffuse[] = { 0.0, 1.0, 1.0 };
-        GLfloat light_position[] = { 0.0, 0.0, 0.0, 1.0 };
-        GLfloat material_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
-        GLfloat back_diffuse[] = { 1.0, 1.0, 1.0};
-
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, light_diffuse);
-        glMaterialfv(GL_BACK, GL_DIFFUSE, back_diffuse);
-
-        glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-        glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-        glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.0);
-        glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.2);
-        glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.4);
-
-
-
-        glColor3f(1, 0, 1);
-        gluQuadricDrawStyle(quadObj, GLU_LINE);
-        gluSphere(quadObj, radius, 25, 25);
-        glPopMatrix();
-    gluDeleteQuadric(quadObj);
+    
     glutSwapBuffers();
 
 
@@ -230,7 +268,7 @@ void display()
         zMoveBack += go_back * 0.01;
         zMoveFront -= go_back * 0.01;
     }
-    if (xMove > 0.3)
+    if (xMove > 0.2)
     {
         time_to_move = false;
     }
@@ -246,14 +284,13 @@ void display()
     }
     if ((xPos > 0 && zSpeed > 0) || (xPos < 0 && zSpeed < 0))
         zSpeed *= -1;
+    glDisable(GL_BLEND);
 }
 
 void mouseButton(int button, int state, int x, int y) 
 {
-    // только при начале движени€, если нажата лева€ кнопка
-    if (button == GLUT_LEFT_BUTTON) {
-
-        // когда кнопка отпущена
+    if (button == GLUT_LEFT_BUTTON) 
+    {
         if (state == GLUT_UP && time_to_move == false) 
         {
             time_to_move = true; 
@@ -265,6 +302,27 @@ void mouseButton(int button, int state, int x, int y)
             go_back *= -1;
         }
     }
+}
+
+void processSpecialKeys(int key, int x, int y) 
+{
+    //textures
+    if (key == GLUT_KEY_DOWN)
+    {
+        textures_enable = true;
+        is_texture = 1;
+    }
+    if (key == GLUT_KEY_UP)
+    {
+        textures_enable = false;
+        is_texture = 0;
+    }
+
+    //alpha chanel
+    if (key == GLUT_KEY_LEFT)
+        alpha = 1;
+    if (key == GLUT_KEY_RIGHT)
+        alpha = 0.5;
 }
 
 void reshape(GLsizei weight, GLsizei height) {
@@ -323,6 +381,7 @@ int main(int argc, char** argv) {
     glutCreateWindow(title);
     glutDisplayFunc(display);
     glutMouseFunc(mouseButton);
+    glutSpecialFunc(processSpecialKeys);
     glutReshapeFunc(reshape);
     glutTimerFunc(0, Timer, 0);
     initGL();
